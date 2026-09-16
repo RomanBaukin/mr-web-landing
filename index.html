@@ -14,6 +14,8 @@
    Mr. Web — направление «Семь дней».
    Сквозной объект страницы — семидневная шкала запуска: она показывает
    то, что здесь на самом деле продаётся, то есть зафиксированный срок.
+   Мотив отзывается в первом экране, в разделе «Как проходит неделя»
+   и в прайсе, где у каждой услуги своя длина полосы.
    ═══════════════════════════════════════════════════════════════════ */
 
 /* ── шрифты: только кириллица и латиница, переменные файлы ─────────── */
@@ -172,7 +174,7 @@ a:hover { color: var(--mark-deep); }
   font-family: var(--display); font-weight: 500;
   font-size: clamp(15px, 1.5vw, 19px); line-height: 1.15; letter-spacing: -0.015em;
 }
-/* Последний день залит: сюда приезжает бегунок, это точка сдачи.
+/* Последний день залит: сюда приезжает линия, это точка сдачи.
    Иерархия внутри держится кеглем, а не прозрачностью — прозрачная
    подпись на красном не добирала 4,5:1. */
 .seg-last { background: var(--mark); border-left-color: var(--mark); }
@@ -189,8 +191,202 @@ a:hover { color: var(--mark-deep); }
   @keyframes sweep { from { transform: scaleX(0); } }
 }
 
+/* ── общее для разделов ────────────────────────────────────────────── */
+.sec { padding-block: calc(2.5 * var(--step)); }
+.sec + .sec { border-top: 1px solid var(--rule); }
+.sec-title { font-size: clamp(28px, 3vw, 40px); line-height: 1.1; }
+.sec-lead {
+  margin-top: var(--step); max-width: var(--measure);
+  font-size: 17px; color: var(--muted);
+}
+
+/* ── условия: строки бланка, всё по одной оси ──────────────────────── */
+.terms { background: var(--paper-2); border-top: 1px solid var(--rule); }
+.terms-in { padding-block: calc(2.5 * var(--step)); }
+.terms-list { list-style: none; margin: calc(1.25 * var(--step)) 0 0; padding: 0; }
+.terms-row {
+  display: grid; grid-template-columns: minmax(0, 22ch) minmax(0, 1fr);
+  gap: 4px clamp(24px, 5vw, 80px); align-items: baseline;
+  padding-block: calc(0.75 * var(--step));
+  border-bottom: 1px solid var(--rule);
+}
+.terms-row:first-child { border-top: 1px solid var(--ink); }
+.terms-key { font-size: 16px; color: var(--muted); }
+.terms-val, .terms-note { display: block; }
+.terms-val {
+  font-family: var(--display); font-weight: 600;
+  font-size: clamp(20px, 2.2vw, 27px); line-height: 1.2; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.terms-note { font-size: 15px; color: var(--muted); margin-top: 2px; }
+
+/* ── работа ────────────────────────────────────────────────────────── */
+.cases { display: grid; gap: calc(2 * var(--step)); margin-top: calc(1.5 * var(--step)); }
+.case { margin: 0; display: grid; gap: var(--step); }
+.case-shot {
+  width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover;
+  border: 1px solid var(--rule); border-radius: 3px; background: var(--paper-2);
+}
+.case-cap { display: grid; gap: 10px; max-width: 62ch; }
+.case-name { font-size: clamp(20px, 2vw, 25px); line-height: 1.15; }
+.case-text { font-size: 16px; color: var(--muted); }
+/* факт срока набран отметкой — тот же красный, что и день сдачи */
+.case-fact {
+  font-family: var(--display); font-weight: 500; font-size: 15px;
+  color: var(--mark); display: inline-flex; align-items: center; gap: 9px;
+}
+.case-fact::before {
+  content: ""; width: 26px; height: 3px; background: var(--mark); flex: none;
+}
+@media (min-width: 900px) {
+  .case { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: start;
+          gap: clamp(28px, 4vw, 64px); }
+}
+
+/* ── как проходит неделя ───────────────────────────────────────────── */
+/* Нумерация здесь честная: это настоящая последовательность дней. */
+.days { list-style: none; margin: calc(1.5 * var(--step)) 0 0; padding: 0; }
+.day {
+  display: grid;
+  grid-template-columns: minmax(0, 9ch) minmax(0, 22ch) minmax(0, 1fr);
+  gap: 10px clamp(24px, 4vw, 64px); align-items: baseline;
+  padding-block: calc(1.25 * var(--step));
+  border-top: 1px solid var(--rule);
+}
+.day:first-child { border-top: 1px solid var(--ink); }
+.day-n {
+  font-family: var(--display); font-weight: 600; font-size: 15px;
+  font-variant-numeric: tabular-nums; color: var(--mark);
+}
+.day-name { font-size: clamp(18px, 1.9vw, 22px); line-height: 1.2; }
+.day-body { display: grid; gap: 8px; }
+.day-text { font-size: 16px; color: var(--muted); max-width: 52ch; }
+.day-need { font-size: 15px; color: var(--ink); }
+.day-need b { font-family: var(--display); font-weight: 500; }
+
+/* ── услуги ────────────────────────────────────────────────────────── */
+/* Нумерации нет: услуги заказывают в любом порядке, это не цепочка. */
+.services { margin-top: calc(1.5 * var(--step)); }
+.service {
+  display: grid; grid-template-columns: minmax(0, 26ch) minmax(0, 1fr);
+  gap: 10px clamp(24px, 5vw, 80px); align-items: baseline;
+  padding-block: calc(1.25 * var(--step));
+  border-top: 1px solid var(--rule);
+}
+.service:first-child { border-top: 1px solid var(--ink); }
+.service h3 { font-size: clamp(18px, 1.9vw, 22px); line-height: 1.2; }
+.service p { font-size: 16px; color: var(--muted); max-width: 56ch; }
+
+/* ── цены ──────────────────────────────────────────────────────────── */
+.prices {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: clamp(20px, 3vw, 40px); margin-top: calc(1.5 * var(--step));
+  align-items: start;
+}
+.price { border-top: 3px solid var(--rule); padding-top: calc(0.75 * var(--step)); }
+/* Ведущая услуга отмечена линией, а не выдуманной плашкой «выбор большинства».
+   Толщина у всех одинаковая, иначе карточки расходятся по базовой линии. */
+.price-lead { border-top-color: var(--mark); }
+.price h3 { font-size: 18px; line-height: 1.2; }
+.price-num {
+  font-family: var(--display); font-weight: 600;
+  font-size: clamp(28px, 3vw, 36px); line-height: 1.15; letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums; margin-top: 10px;
+}
+/* полоса срока — тот же мотив недели, длина пропорциональна дням */
+.price-term { margin-top: 14px; font-size: 15px; color: var(--muted); }
+.price-bar {
+  display: block; height: 3px; width: var(--w); background: var(--mark);
+  margin-bottom: 8px; min-width: 18px;
+}
+.price ul { list-style: none; margin: var(--step) 0 0; padding: 0; display: grid; gap: 10px; }
+.price li { font-size: 15.5px; line-height: 1.45; padding-left: 20px; position: relative; color: var(--muted); }
+.price li::before {
+  content: ""; position: absolute; left: 0; top: 10px;
+  width: 11px; height: 1px; background: var(--ink);
+}
+
+/* ── гарантии ──────────────────────────────────────────────────────── */
+.guards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: calc(1.25 * var(--step)) clamp(24px, 3.5vw, 56px);
+  margin-top: calc(1.5 * var(--step));
+}
+.guard { border-top: 1px solid var(--ink); padding-top: 14px; }
+.guard h3 { font-size: 17px; line-height: 1.25; }
+.guard p { margin-top: 8px; font-size: 15.5px; line-height: 1.5; color: var(--muted); }
+
+/* ── обо мне ───────────────────────────────────────────────────────── */
+.about-in { display: grid; gap: calc(1.5 * var(--step)); align-items: start; }
+.about-text .sec-title { margin-bottom: 4px; }
+.about-text { display: grid; gap: var(--step); max-width: var(--measure); }
+.about-text p { font-size: 17px; color: var(--muted); }
+.about-sign {
+  font-family: var(--display); font-weight: 600; font-size: 17px;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+.about-photo {
+  width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover;
+  border: 1px solid var(--rule); border-radius: 3px; background: var(--paper-2);
+}
+@media (min-width: 820px) {
+  .about-in { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+              gap: clamp(32px, 6vw, 96px); align-items: center; }
+}
+
+/* ── вопросы ───────────────────────────────────────────────────────── */
+.faq-list { margin-top: calc(1.5 * var(--step)); border-top: 1px solid var(--ink); }
+.faq-list details { border-bottom: 1px solid var(--rule); }
+.faq-list summary {
+  cursor: pointer; list-style: none;
+  padding-block: calc(0.75 * var(--step));
+  font-family: var(--display); font-weight: 500;
+  font-size: clamp(17px, 1.7vw, 19px); line-height: 1.3;
+  display: flex; justify-content: space-between; gap: 24px; align-items: baseline;
+}
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after {
+  content: "+"; color: var(--mark); font-size: 21px; line-height: 1; flex: none;
+}
+.faq-list details[open] summary::after { content: "\2212"; }
+.faq-list summary:hover { color: var(--mark); }
+.faq-list p {
+  font-size: 16px; color: var(--muted);
+  max-width: 62ch; padding-bottom: var(--step);
+}
+/* плавное раскрытие там, где браузер умеет; где нет — открывается сразу */
+@supports (interpolate-size: allow-keywords) {
+  @media (prefers-reduced-motion: no-preference) {
+    :root { interpolate-size: allow-keywords; }
+    .faq-list details::details-content {
+      height: 0; overflow: hidden;
+      transition: height 240ms ease, content-visibility 240ms allow-discrete;
+    }
+    .faq-list details[open]::details-content { height: auto; }
+  }
+}
+
+/* ── финал: единственный залитый блок на странице ──────────────────── */
+.close { background: var(--ink); color: var(--paper); }
+.close-in { padding-block: calc(3 * var(--step)); }
+.close h2 {
+  font-size: clamp(30px, 3.6vw, 52px); line-height: 1.04;
+  letter-spacing: -0.03em; max-width: 18ch;
+}
+.close p {
+  margin-top: var(--step); max-width: var(--measure);
+  font-size: 18px; color: color-mix(in srgb, var(--paper) 78%, var(--ink));
+}
+.close-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px;
+  margin-top: calc(1.5 * var(--step));
+}
+.close-row .aside { font-size: 15.5px; color: color-mix(in srgb, var(--paper) 70%, var(--ink)); }
+.close .cta { border-color: color-mix(in srgb, var(--paper) 55%, var(--ink)); }
+.close .cta:hover { border-color: var(--paper); }
+.close :focus-visible { outline-color: var(--paper); }
+
 /* ── подвал ────────────────────────────────────────────────────────── */
-.foot { margin-top: calc(3 * var(--step)); border-top: 1px solid var(--rule); }
 .foot-in {
   display: flex; flex-wrap: wrap; align-items: baseline;
   gap: 8px clamp(24px, 4vw, 56px);
@@ -219,6 +415,10 @@ a:hover { color: var(--mark-deep); }
   .seg:first-child { border-top: 1px solid var(--ink); }
   .seg-day { flex: none; width: 74px; }
   .scale-label { margin-bottom: 8px; }
+
+  /* многоколоночные строки складываются в один столбец */
+  .terms-row, .day, .service { grid-template-columns: 1fr; }
+  .day-n { order: -1; }
 }
 @media (max-width: 560px) {
   .cta-sm .cta-long { display: none; }
@@ -275,13 +475,261 @@ a:hover { color: var(--mark-deep); }
     <div class="base"></div>
   </section>
 
-  <!-- Разделы шага 3 встают сюда:
-       Условия → Работа → Как я работаю → Услуги → Цены →
-       Гарантии → Обо мне → Вопросы → Финал -->
+  <!-- условия ─────────────────────────────────────────────────────── -->
+  <section class="terms" aria-labelledby="terms-title">
+    <div class="wrap terms-in">
+      <h2 class="sec-title" id="terms-title">Условия</h2>
+      <ul class="terms-list">
+        <li class="terms-row">
+          <span class="terms-key">Срок лендинга</span>
+          <span><span class="terms-val">5–7&nbsp;дней</span> <span class="terms-note">с момента, когда пришли материалы и предоплата</span></span>
+        </li>
+        <li class="terms-row">
+          <span class="terms-key">Стоимость</span>
+          <span><span class="terms-val">от&nbsp;$200</span> <span class="terms-note">точная цифра — после короткого брифа, бесплатно</span></span>
+        </li>
+        <li class="terms-row">
+          <span class="terms-key">Оплата</span>
+          <span><span class="terms-val">50% на старте</span> <span class="terms-note">остальное, когда сайт принят и работает</span></span>
+        </li>
+        <li class="terms-row">
+          <span class="terms-key">Поддержка после запуска</span>
+          <span><span class="terms-val">30&nbsp;дней</span> <span class="terms-note">правки, доработки и исправления бесплатно</span></span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- работа ──────────────────────────────────────────────────────── -->
+  <section class="sec wrap" id="work" aria-labelledby="work-title">
+    <h2 class="sec-title" id="work-title">Работа</h2>
+    <p class="sec-lead">Проекты для малого бизнеса и локальных услуг. Каждый сдан в срок, который назвал на брифе.</p>
+
+    <div class="cases">
+      <figure class="case">
+        <img class="case-shot" src="assets/case-1.svg" width="1600" height="1000" loading="lazy" alt="Скриншот первого проекта">
+        <figcaption class="case-cap">
+          <h3 class="case-name">Название проекта</h3>
+          <p class="case-text">Одностраничный сайт под услугу: структура, текст, дизайн, форма заявки и аналитика. Заявки уходят в Telegram владельцу.</p>
+          <p class="case-fact">Сдан на шестой день</p>
+        </figcaption>
+      </figure>
+
+      <figure class="case">
+        <img class="case-shot" src="assets/case-2.svg" width="1600" height="1000" loading="lazy" alt="Скриншот второго проекта">
+        <figcaption class="case-cap">
+          <h3 class="case-name">Название проекта</h3>
+          <p class="case-text">Многостраничный сайт с каталогом услуг и админкой: владелец правит тексты и цены сам, без обращения к разработчику.</p>
+          <p class="case-fact">Сдан за две недели</p>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- как проходит неделя ─────────────────────────────────────────── -->
+  <section class="sec wrap" id="process" aria-labelledby="process-title">
+    <h2 class="sec-title" id="process-title">Как проходит неделя</h2>
+    <p class="sec-lead">Срок держится не за счёт спешки, а за счёт порядка: каждый этап заканчивается тем, что вы что-то видите и утверждаете.</p>
+
+    <ol class="days">
+      <li class="day">
+        <span class="day-n">день 1</span>
+        <h3 class="day-name">Бриф и смета</h3>
+        <div class="day-body">
+          <p class="day-text">Отвечаете на десяток вопросов: что за бизнес, кому продаёте, чем отличаетесь от соседей. В тот же день называю точный срок и цену.</p>
+          <p class="day-need"><b>От вас:</b> ответы на вопросы, логотип и прайс, если они есть</p>
+        </div>
+      </li>
+      <li class="day">
+        <span class="day-n">дни 2–3</span>
+        <h3 class="day-name">Структура и текст</h3>
+        <div class="day-body">
+          <p class="day-text">Собираю порядок блоков и пишу текст под вашу услугу. Показываю до того, как начнётся дизайн, — переписать абзац дешевле, чем перерисовать экран.</p>
+          <p class="day-need"><b>От вас:</b> правки одним списком, не по одной в день</p>
+        </div>
+      </li>
+      <li class="day">
+        <span class="day-n">дни 4–5</span>
+        <h3 class="day-name">Дизайн и согласование</h3>
+        <div class="day-body">
+          <p class="day-text">Рисую макет на вашем настоящем тексте, а не на «рыбе». Правки на этом этапе входят в стоимость, поэтому при сдаче сюрпризов не бывает.</p>
+          <p class="day-need"><b>От вас:</b> фотографии и одно «да» на макет</p>
+        </div>
+      </li>
+      <li class="day">
+        <span class="day-n">день 6</span>
+        <h3 class="day-name">Вёрстка и адаптив</h3>
+        <div class="day-body">
+          <p class="day-text">Перевожу макет в код. Проверяю на телефоне, планшете и десктопе, отдельно смотрю скорость загрузки — от неё зависит и позиция в поиске, и заявки.</p>
+          <p class="day-need"><b>От вас:</b> ничего, это моя часть</p>
+        </div>
+      </li>
+      <li class="day">
+        <span class="day-n">день 7</span>
+        <h3 class="day-name">Запуск</h3>
+        <div class="day-body">
+          <p class="day-text">Ставлю сайт на ваш домен и хостинг, подключаю аналитику и форму заявок, передаю все доступы. Дальше 30&nbsp;дней правки бесплатны.</p>
+          <p class="day-need"><b>От вас:</b> доступы к домену или полчаса, чтобы завести их вместе</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- услуги ──────────────────────────────────────────────────────── -->
+  <section class="sec wrap" id="services" aria-labelledby="services-title">
+    <h2 class="sec-title" id="services-title">Услуги</h2>
+
+    <div class="services">
+      <div class="service">
+        <h3>Лендинги под ключ</h3>
+        <p>Одностраничный сайт под конкретную услугу или предложение: структура, текст, дизайн, вёрстка, форма заявок и аналитика. Запускается за 5–7&nbsp;дней.</p>
+      </div>
+      <div class="service">
+        <h3>Многостраничные сайты</h3>
+        <p>Корпоративный сайт или каталог услуг: продуманная навигация, страницы под каждое направление, блог и понятная админка, чтобы вносить правки самому.</p>
+      </div>
+      <div class="service">
+        <h3>Вёрстка по макету</h3>
+        <p>Готовый дизайн из Figma превращаю в чистый адаптивный код: пиксель в пиксель, быстрая загрузка, корректная работа на телефоне, планшете и десктопе.</p>
+      </div>
+      <div class="service">
+        <h3>Интеграции и автоматизация</h3>
+        <p>Заявки уходят в CRM и мессенджер, оплата принимается онлайн, рассылки и уведомления работают без ручного участия. Меньше рутины на стороне владельца.</p>
+      </div>
+      <div class="service">
+        <h3>SEO-оптимизация</h3>
+        <p>Техническая база для поиска: семантика и мета-теги, скорость и Core Web Vitals, микроразметка, карта сайта. Сайт находят по запросам, а не только по рекламе.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- цены ────────────────────────────────────────────────────────── -->
+  <section class="sec wrap" id="pricing" aria-labelledby="pricing-title">
+    <h2 class="sec-title" id="pricing-title">Цены</h2>
+    <p class="sec-lead">Итоговая смета зависит от числа страниц и интеграций. Точную цифру называю после короткого брифа — он бесплатный и ни к чему не обязывает.</p>
+
+    <div class="prices">
+      <div class="price price-lead">
+        <h3>Лендинг</h3>
+        <p class="price-num">от&nbsp;$200</p>
+        <p class="price-term"><span class="price-bar" style="--w:50%"></span>5–7&nbsp;дней</p>
+        <ul>
+          <li>Структура и текст под услугу</li>
+          <li>Дизайн и адаптив</li>
+          <li>Форма заявки и аналитика</li>
+        </ul>
+      </div>
+      <div class="price">
+        <h3>Многостраничный сайт</h3>
+        <p class="price-num">от&nbsp;$300</p>
+        <p class="price-term"><span class="price-bar" style="--w:100%"></span>от двух недель</p>
+        <ul>
+          <li>Страницы под направления</li>
+          <li>Каталог, блог, админка</li>
+          <li>Базовая SEO-подготовка</li>
+        </ul>
+      </div>
+      <div class="price">
+        <h3>Вёрстка по макету</h3>
+        <p class="price-num">от&nbsp;$100</p>
+        <p class="price-term"><span class="price-bar" style="--w:22%"></span>от трёх дней</p>
+        <ul>
+          <li>Чистый адаптивный код</li>
+          <li>Скорость и Core Web Vitals</li>
+          <li>Передача с документацией</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- гарантии ────────────────────────────────────────────────────── -->
+  <section class="sec wrap" id="guarantees" aria-labelledby="guarantees-title">
+    <h2 class="sec-title" id="guarantees-title">Что вы получаете точно</h2>
+
+    <div class="guards">
+      <div class="guard">
+        <h3>Срок в договорённости</h3>
+        <p>Лендинг — 5–7&nbsp;дней. Срок фиксируем до старта, и я его держу.</p>
+      </div>
+      <div class="guard">
+        <h3>Месяц поддержки</h3>
+        <p>30&nbsp;дней после запуска правки, доработки и исправления бесплатны.</p>
+      </div>
+      <div class="guard">
+        <h3>Оплата пополам</h3>
+        <p>50% на старте, остальное — когда сайт принят и работает.</p>
+      </div>
+      <div class="guard">
+        <h3>Сайт остаётся вашим</h3>
+        <p>Доступы, домен, хостинг и код передаю вам. Привязки ко мне нет.</p>
+      </div>
+      <div class="guard">
+        <h3>Без конструкторов</h3>
+        <p>Обычный код, который сможет подхватить любой разработчик. Ежемесячной платы за платформу не будет.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- обо мне ─────────────────────────────────────────────────────── -->
+  <section class="sec wrap" id="about" aria-labelledby="about-title">
+    <div class="about-in">
+      <div class="about-text">
+        <h2 class="sec-title" id="about-title">Кто делает</h2>
+        <p>Делаю сайты для малого бизнеса: беру задачу целиком и довожу до запуска. Без посредников, без переписки на три недели и без «дизайнер в отпуске, вернёмся к вам в понедельник».</p>
+        <p>Работаю один, поэтому отвечаю за результат сам и называю сроки, которые могу удержать. Если вижу, что задача не укладывается в неделю, говорю об этом на брифе, а не на седьмой день.</p>
+        <p class="about-sign">Роман Баукин</p>
+      </div>
+      <img class="about-photo" src="assets/roman.svg" width="800" height="1000" loading="lazy" alt="Роман Баукин">
+    </div>
+  </section>
+
+  <!-- вопросы ─────────────────────────────────────────────────────── -->
+  <section class="sec wrap" id="faq" aria-labelledby="faq-title">
+    <h2 class="sec-title" id="faq-title">Частые вопросы</h2>
+
+    <div class="faq-list">
+      <details open>
+        <summary>Что нужно от меня для старта?</summary>
+        <p>Короткий бриф: что за бизнес, кому продаёте, какие услуги и материалы уже есть. Текст и структуру могу собрать сам — фотографии, логотип и прайс присылаете вы.</p>
+      </details>
+      <details>
+        <summary>Реально уложиться в семь дней?</summary>
+        <p>Да, если материалы приходят вовремя и правки обсуждаем одним блоком, а не по одной в день. Срок считается с момента, когда получены контент и предоплата.</p>
+      </details>
+      <details>
+        <summary>Как считается стоимость?</summary>
+        <p>Лендинг — от&nbsp;$200, многостраничный сайт — от&nbsp;$300, вёрстка по макету — от&nbsp;$100. Точную цифру называю после брифа: она зависит от числа страниц и интеграций.</p>
+      </details>
+      <details>
+        <summary>Что входит в бесплатную поддержку?</summary>
+        <p>30&nbsp;дней после запуска: правки текста и блоков, исправление ошибок, помощь с доступами и настройками. Новые разделы считаются отдельно.</p>
+      </details>
+      <details>
+        <summary>Сайт будет работать на телефоне?</summary>
+        <p>Да. Раскладку под телефон, планшет и десктоп проверяю на реальных устройствах, отдельно смотрю скорость загрузки.</p>
+      </details>
+      <details>
+        <summary>А если мне не понравится результат?</summary>
+        <p>Структуру и дизайн согласуем до вёрстки, поэтому увидеть готовый сайт и удивиться невозможно. Правки на этапе согласования входят в стоимость.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- финал ───────────────────────────────────────────────────────── -->
+  <section class="close" id="contact" aria-labelledby="contact-title">
+    <div class="wrap close-in">
+      <h2 id="contact-title">Расскажите о проекте</h2>
+      <p>Напишите в Telegram — задам несколько вопросов о бизнесе и задаче и в тот же день назову срок и цену. Бриф и оценка бесплатны и ни к чему не обязывают.</p>
+      <div class="close-row">
+        <a class="cta" href="https://t.me/roman_baukin" target="_blank" rel="noopener">Написать @roman_baukin</a>
+        <span class="aside">Отвечаю в&nbsp;течение дня</span>
+      </div>
+    </div>
+  </section>
 
 </main>
 
-<footer class="foot">
+<footer>
   <div class="wrap foot-in">
     <p class="foot-brand">Mr.&nbsp;Web</p>
     <p class="foot-note">Сайты под ключ. Роман Баукин</p>

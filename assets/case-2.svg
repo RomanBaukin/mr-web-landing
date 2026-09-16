@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="Здесь будет скриншот второго проекта">
+  <rect width="1600" height="1000" fill="#E3E3DC"/>
+  <rect x="0.5" y="0.5" width="1599" height="999" fill="none" stroke="#C8C7C0"/>
+  <text x="800" y="500" fill="#63605A" font-family="system-ui, sans-serif" font-size="50" text-anchor="middle" dominant-baseline="middle">Здесь будет скриншот второго проекта</text>
+</svg>
