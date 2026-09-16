@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Mr. Web — сайты под ключ за семь дней</title>
+<meta name="description" content="Лендинги и многостраничные сайты под ключ: структура, текст, дизайн, вёрстка, интеграции. Срок 5–7 дней, от $200, половина оплаты после сдачи.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<!-- Открытый граф и JSON-LD добавляются на шаге 4: им нужен боевой домен. -->
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   Mr. Web — направление «Семь дней».
+   Сквозной объект страницы — семидневная шкала запуска: она показывает
+   то, что здесь на самом деле продаётся, то есть зафиксированный срок.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── шрифты: только кириллица и латиница, переменные файлы ─────────── */
+@font-face {
+  font-family: 'Geologica'; font-style: normal; font-weight: 400 700; font-display: swap;
+  src: url('assets/fonts/geologica-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Geologica'; font-style: normal; font-weight: 400 700; font-display: swap;
+  src: url('assets/fonts/geologica-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Golos Text'; font-style: normal; font-weight: 400 600; font-display: swap;
+  src: url('assets/fonts/golos-text-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Golos Text'; font-style: normal; font-weight: 400 600; font-display: swap;
+  src: url('assets/fonts/golos-text-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ── токены ────────────────────────────────────────────────────────── */
+:root {
+  --paper:     #EDEDE8;  /* холодная офсетная бумага — фон страницы     */
+  --paper-2:   #E3E3DC;  /* полоса секции, на полтона глубже бумаги     */
+  --ink:       #201C1A;  /* краска: чёрный с тёплым подмесом            */
+  --muted:     #63605A;  /* вторичный текст, 5,3:1 к бумаге             */
+  --rule:      #C8C7C0;  /* волосяные линии и границы                   */
+  --mark:      #C6211F;  /* отметка срока и главное действие            */
+  --mark-deep: #8A1614;  /* наведение и нажатие                         */
+
+  --step: 28px;                          /* базовый шаг вертикали       */
+  --edge: clamp(20px, 4.5vw, 64px);      /* поля контейнера             */
+  --measure: 54ch;                       /* мера абзаца                 */
+  --display: 'Geologica', system-ui, sans-serif;
+  --text: 'Golos Text', system-ui, sans-serif;
+}
+
+/* ── база ──────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--paper); color: var(--ink);
+  font: 400 17px/var(--step) var(--text);
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--display); font-weight: 600;
+  letter-spacing: -0.02em; margin: 0;
+}
+p { margin: 0; }
+img, svg { display: block; max-width: 100%; }
+
+a { color: var(--mark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--mark-deep); }
+
+:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; border-radius: 2px; }
+::selection { background: var(--mark); color: var(--paper); }
+
+/* ── утилиты ───────────────────────────────────────────────────────── */
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: var(--edge); }
+
+/* ссылка в обход шапки: видна только при фокусе с клавиатуры */
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: var(--ink); color: var(--paper);
+  padding: 12px 18px; border-radius: 0 0 3px 0; text-decoration: none;
+  font-family: var(--display); font-weight: 500; font-size: 15px;
+}
+.skip:focus { left: 0; color: var(--paper); }
+
+/* Единственная залитая кнопка на странице — главное действие.
+   Вторичные ссылки-действия текстовые, чтобы не спорить с ней по весу. */
+.cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--display); font-weight: 500; font-size: 15px; line-height: 1;
+  color: var(--paper); background: var(--mark);
+  padding: 13px 20px; border: 1px solid var(--mark); border-radius: 3px;
+  text-decoration: none; white-space: nowrap;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.cta:hover { background: var(--mark-deep); border-color: var(--mark-deep); color: var(--paper); }
+.cta-sm { padding: 10px 16px; font-size: 14.5px; }
+.cta-short { display: none; }
+
+/* ── шапка ─────────────────────────────────────────────────────────── */
+.top {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--paper); border-bottom: 1px solid var(--rule);
+}
+.top-in { display: flex; align-items: center; gap: clamp(16px, 2.4vw, 34px); height: 68px; }
+
+.brand {
+  display: flex; align-items: center; gap: 10px; margin-right: auto;
+  font-family: var(--display); font-weight: 600; font-size: 18px;
+  letter-spacing: -0.01em; text-decoration: none; color: var(--ink);
+}
+.brand:hover { color: var(--ink); }
+.brand svg { width: 33px; height: 30px; flex: none; }
+
+.top nav { display: flex; gap: clamp(16px, 2.2vw, 30px); }
+.top nav a {
+  color: var(--muted); text-decoration: none; font-size: 15.5px;
+  padding-block: 4px; border-bottom: 1px solid transparent;
+}
+.top nav a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* ── первый экран ──────────────────────────────────────────────────── */
+.hero { padding-top: calc(1.5 * var(--step)); padding-bottom: var(--step); }
+.hero h1 {
+  font-size: clamp(40px, 5.4vw, 78px); line-height: 0.99;
+  letter-spacing: -0.035em; max-width: 26ch;
+}
+.hero h1 .l2 { display: block; }
+.hero-sub {
+  margin-top: var(--step); max-width: var(--measure);
+  font-size: 18px; color: var(--muted);
+}
+.hero-row {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 14px 22px;
+  margin-top: calc(1.5 * var(--step));
+}
+.hero-row .aside { font-size: 15.5px; color: var(--muted); }
+
+/* ── шкала семи дней ───────────────────────────────────────────────── */
+/* Подпись выровнена по текстовой колонке, сама шкала уходит в края
+   экрана: так она читается как измерительный объект, а не как блок. */
+.scale { margin-top: var(--step); }
+.scale-label { font-size: 15.5px; color: var(--muted); margin-bottom: 12px; }
+
+.track {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  border-top: 1px solid var(--ink);
+}
+.seg {
+  grid-column: span var(--span);
+  padding: 14px 16px 18px; min-height: 104px;
+  border-left: 1px solid var(--rule);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.seg:first-child { border-left: 0; }
+.seg-day {
+  font-family: var(--display); font-weight: 500; font-size: 13px;
+  font-variant-numeric: tabular-nums; color: var(--muted);
+}
+.seg-name {
+  font-family: var(--display); font-weight: 500;
+  font-size: clamp(15px, 1.5vw, 19px); line-height: 1.15; letter-spacing: -0.015em;
+}
+/* Последний день залит: сюда приезжает бегунок, это точка сдачи.
+   Иерархия внутри держится кеглем, а не прозрачностью — прозрачная
+   подпись на красном не добирала 4,5:1. */
+.seg-last { background: var(--mark); border-left-color: var(--mark); }
+.seg-last .seg-day,
+.seg-last .seg-name { color: var(--paper); }
+
+/* Отметка срока под шкалой. Единственное движение на странице: линия
+   один раз прочерчивает неделю слева направо и останавливается на дне
+   сдачи. Анимируется transform, а не ширина или left, — иначе браузер
+   пересчитывает раскладку на каждом кадре. */
+.base { height: 3px; background: var(--mark); transform-origin: left center; }
+@media (prefers-reduced-motion: no-preference) {
+  .base { animation: sweep 1500ms cubic-bezier(.24,.62,.3,1) 250ms backwards; }
+  @keyframes sweep { from { transform: scaleX(0); } }
+}
+
+/* ── подвал ────────────────────────────────────────────────────────── */
+.foot { margin-top: calc(3 * var(--step)); border-top: 1px solid var(--rule); }
+.foot-in {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 8px clamp(24px, 4vw, 56px);
+  padding-block: calc(1.5 * var(--step));
+}
+.foot-brand {
+  font-family: var(--display); font-weight: 600; font-size: 17px;
+  letter-spacing: -0.01em;
+}
+.foot-note { font-size: 15px; color: var(--muted); margin-right: auto; }
+.foot-link { font-size: 15px; }
+
+/* ── узкие экраны ──────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .top nav { display: none; }
+}
+@media (max-width: 720px) {
+  /* шкала разворачивается в столбец: дни читаются строками */
+  .track { grid-template-columns: 1fr; border-top: 0; }
+  .seg {
+    grid-column: auto; min-height: 0;
+    border-left: 0; border-top: 1px solid var(--rule);
+    flex-direction: row; align-items: baseline; gap: 14px;
+    padding: 12px var(--edge);
+  }
+  .seg:first-child { border-top: 1px solid var(--ink); }
+  .seg-day { flex: none; width: 74px; }
+  .scale-label { margin-bottom: 8px; }
+}
+@media (max-width: 560px) {
+  .cta-sm .cta-long { display: none; }
+  .cta-sm .cta-short { display: inline; }
+  .foot-note { margin-right: 0; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<header class="top">
+  <div class="top-in wrap">
+    <a class="brand" href="#main">
+      <svg viewBox="0 6 48 44" aria-hidden="true" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 34V14l12 12 12-12v20" stroke="var(--ink)"/>
+        <path d="M18 22v20l12-12 12 12V22" stroke="var(--mark)"/>
+      </svg>
+      Mr.&nbsp;Web
+    </a>
+    <nav aria-label="Разделы страницы">
+      <a href="#work">Работа</a>
+      <a href="#services">Услуги</a>
+      <a href="#pricing">Цены</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <a class="cta cta-sm" href="https://t.me/roman_baukin" target="_blank" rel="noopener">
+      <span class="cta-long">Написать в&nbsp;Telegram</span><span class="cta-short">Telegram</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero wrap">
+    <h1>Семь дней <span class="l2">от разговора до запуска.</span></h1>
+    <p class="hero-sub">Лендинги и сайты под ключ для малого бизнеса: структура, текст, дизайн, вёрстка, интеграции. От&nbsp;$200, половина оплаты — после сдачи.</p>
+    <div class="hero-row">
+      <a class="cta" href="https://t.me/roman_baukin" target="_blank" rel="noopener">Написать в&nbsp;Telegram</a>
+      <span class="aside">Отвечаю в&nbsp;течение дня</span>
+    </div>
+  </section>
+
+  <section class="scale">
+    <p class="scale-label wrap">Так проходит неделя от брифа до рабочего сайта</p>
+    <ol class="track" aria-label="Семь дней работы над сайтом">
+      <li class="seg" style="--span:1"><span class="seg-day">день 1</span><span class="seg-name">Бриф и смета</span></li>
+      <li class="seg" style="--span:2"><span class="seg-day">дни 2–3</span><span class="seg-name">Структура и текст</span></li>
+      <li class="seg" style="--span:2"><span class="seg-day">дни 4–5</span><span class="seg-name">Дизайн и согласование</span></li>
+      <li class="seg" style="--span:1"><span class="seg-day">день 6</span><span class="seg-name">Вёрстка и адаптив</span></li>
+      <li class="seg seg-last" style="--span:1"><span class="seg-day">день 7</span><span class="seg-name">Запуск</span></li>
+    </ol>
+    <div class="base"></div>
+  </section>
+
+  <!-- Разделы шага 3 встают сюда:
+       Условия → Работа → Как я работаю → Услуги → Цены →
+       Гарантии → Обо мне → Вопросы → Финал -->
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <p class="foot-brand">Mr.&nbsp;Web</p>
+    <p class="foot-note">Сайты под ключ. Роман Баукин</p>
+    <p class="foot-link"><a href="https://t.me/roman_baukin" target="_blank" rel="noopener">Telegram @roman_baukin</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
