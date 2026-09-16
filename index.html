@@ -161,6 +161,29 @@ a:hover { color: var(--mark-deep); }
 .cta:hover { background: var(--mark-deep); border-color: var(--mark-deep); color: var(--paper); }
 .cta-sm { padding: 10px 16px; font-size: 14.5px; }
 
+/* Блик на кнопке. Волна идёт слева направо — то же направление, что и
+   отметка на шкале, это одно движение на весь сайт, а не новый приём.
+   Волна тёмная, а не светлая: красный уже сидит на 4,91:1 при норме
+   4,5, и любое заметное осветление роняет подпись ниже нормы (белый
+   на 15% даёт 3,97). Затемнение контраст поднимает — на пике 6,6:1.
+   Стартует после того, как отыграет шкала, чтобы два движения не
+   спорили, и повторяется раз в 5,5 с. */
+.cta { position: relative; overflow: hidden; }
+.cta::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 38%;
+  background: linear-gradient(100deg, transparent, rgba(0, 0, 0, 0.18) 45%, transparent);
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cta::after { animation: glint 5.5s cubic-bezier(.35, 0, .25, 1) 8.2s infinite; }
+  @keyframes glint {
+    0%   { transform: translateX(-110%); }
+    20%  { transform: translateX(270%); }
+    100% { transform: translateX(270%); }
+  }
+}
+
 /* ── шапка ─────────────────────────────────────────────────────────── */
 .top {
   position: sticky; top: 0; z-index: 10;
