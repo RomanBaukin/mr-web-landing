@@ -210,37 +210,66 @@ a:hover { color: var(--mark-deep); }
   list-style: none; margin: 0; padding: 0;
   display: grid; grid-template-columns: repeat(7, 1fr);
   border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  --t: 1.7s;      /* сколько держится каждый этап */
+  --start: 0.5s;  /* пауза перед стартом, чтобы страница успела осесть */
 }
+
+/* Вид дня описан четырьмя переменными. Они наследуются внутрь, поэтому
+   одна анимация на сегменте перекрашивает и фон, и обе подписи —
+   отдельные анимации детям не нужны. */
 .seg {
+  --bg: transparent;
+  --edge-c: var(--rule);
+  --c-day: var(--muted);
+  --c-name: var(--ink);
+
   grid-column: span var(--span);
   padding: 14px 16px 18px; min-height: 104px;
-  border-left: 1px solid var(--rule);
+  border-left: 1px solid var(--edge-c);
+  background-color: var(--bg);
   display: flex; flex-direction: column; gap: 6px;
 }
 .seg:first-child { border-left: 0; }
 .seg-day {
   font-family: var(--display); font-weight: 500; font-size: 13px;
-  font-variant-numeric: tabular-nums; color: var(--muted);
+  font-variant-numeric: tabular-nums; color: var(--c-day);
 }
 .seg-name {
   font-family: var(--display); font-weight: 500;
   font-size: clamp(15px, 1.5vw, 19px); line-height: 1.15; letter-spacing: -0.015em;
+  color: var(--c-name);
 }
-/* Последний день залит: сюда приезжает линия, это точка сдачи.
+/* День сдачи залит постоянно: это итог, на нём отметка и остаётся.
    Иерархия внутри держится кеглем, а не прозрачностью — прозрачная
    подпись на красном не добирала 4,5:1. */
-.seg-last { background: var(--mark); border-left-color: var(--mark); }
-.seg-last .seg-day,
-.seg-last .seg-name { color: var(--paper); }
+.seg-last { --bg: var(--mark); --edge-c: var(--mark); --c-day: var(--paper); --c-name: var(--paper); }
 
-/* Отметка срока под шкалой. Единственное движение на странице: линия
-   один раз прочерчивает неделю слева направо и останавливается на дне
-   сдачи. Анимируется transform, а не ширина или left, — иначе браузер
-   пересчитывает раскладку на каждом кадре. */
-.base { height: 3px; background: var(--mark); transform-origin: left center; }
+/* Единственное движение на странице: отметка проходит неделю по одному
+   этапу и останавливается на дне сдачи. Один раз, без повтора.
+   Каждый этап горит ровно своё окно: заливка включается с задержкой
+   i × t и гаснет сама, потому что заполнение не сохраняется. Последний
+   день, наоборот, гасится на всё время прохода и после него возвращается
+   к своему постоянному красному. */
 @media (prefers-reduced-motion: no-preference) {
-  .base { animation: sweep 1500ms cubic-bezier(.24,.62,.3,1) 250ms backwards; }
-  @keyframes sweep { from { transform: scaleX(0); } }
+  .seg:not(.seg-last) {
+    animation: segOn var(--t) linear calc(var(--start) + var(--i) * var(--t));
+  }
+  .seg-last {
+    animation: segOff calc(4 * var(--t)) linear var(--start) backwards;
+  }
+  @keyframes segOn {
+    from, to {
+      --bg: var(--mark); --edge-c: var(--mark);
+      --c-day: var(--paper); --c-name: var(--paper);
+    }
+  }
+  @keyframes segOff {
+    from, to {
+      --bg: transparent; --edge-c: var(--rule);
+      --c-day: var(--muted); --c-name: var(--ink);
+    }
+  }
 }
 
 /* ── общее для разделов ────────────────────────────────────────────── */
@@ -466,11 +495,11 @@ a:hover { color: var(--mark-deep); }
   .track { grid-template-columns: 1fr; border-top: 0; }
   .seg {
     grid-column: auto; min-height: 0;
-    border-left: 0; border-top: 1px solid var(--rule);
+    border-left: 0; border-top: 1px solid var(--edge-c);
     flex-direction: row; align-items: baseline; gap: 14px;
     padding: 12px var(--edge);
   }
-  .seg:first-child { border-top: 1px solid var(--ink); }
+  .seg:first-child { border-top-color: var(--ink); }
   .seg-day { flex: none; width: 74px; }
   .scale-label { margin-bottom: 8px; }
 
@@ -531,13 +560,12 @@ a:hover { color: var(--mark-deep); }
   <section class="scale">
     <p class="scale-label wrap">Так проходит неделя от брифа до рабочего сайта</p>
     <ol class="track" aria-label="Семь дней работы над сайтом">
-      <li class="seg" style="--span:1"><span class="seg-day">день 1</span><span class="seg-name">Бриф и смета</span></li>
-      <li class="seg" style="--span:2"><span class="seg-day">дни 2–3</span><span class="seg-name">Структура и текст</span></li>
-      <li class="seg" style="--span:2"><span class="seg-day">дни 4–5</span><span class="seg-name">Дизайн и согласование</span></li>
-      <li class="seg" style="--span:1"><span class="seg-day">день 6</span><span class="seg-name">Вёрстка и адаптив</span></li>
-      <li class="seg seg-last" style="--span:1"><span class="seg-day">день 7</span><span class="seg-name">Запуск</span></li>
+      <li class="seg" style="--span:1; --i:0"><span class="seg-day">день 1</span><span class="seg-name">Бриф и смета</span></li>
+      <li class="seg" style="--span:2; --i:1"><span class="seg-day">дни 2–3</span><span class="seg-name">Структура и текст</span></li>
+      <li class="seg" style="--span:2; --i:2"><span class="seg-day">дни 4–5</span><span class="seg-name">Дизайн и согласование</span></li>
+      <li class="seg" style="--span:1; --i:3"><span class="seg-day">день 6</span><span class="seg-name">Вёрстка и адаптив</span></li>
+      <li class="seg seg-last" style="--span:1; --i:4"><span class="seg-day">день 7</span><span class="seg-name">Запуск</span></li>
     </ol>
-    <div class="base"></div>
   </section>
 
   <!-- условия ─────────────────────────────────────────────────────── -->
