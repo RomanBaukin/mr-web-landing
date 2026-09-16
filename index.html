@@ -7,7 +7,57 @@
 <title>Mr. Web — сайты под ключ за семь дней</title>
 <meta name="description" content="Лендинги и многостраничные сайты под ключ: структура, текст, дизайн, вёрстка, интеграции. Срок 5–7 дней, от $200, половина оплаты после сдачи.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<!-- Открытый граф и JSON-LD добавляются на шаге 4: им нужен боевой домен. -->
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<!-- ───────────────────────────────────────────────────────────────────
+     Боевой адрес страницы. Это единственное место, где он записан
+     абсолютным: превью ссылки и разметка для поиска иначе не работают.
+     При переезде на Netlify менять здесь и в JSON-LD ниже — больше
+     нигде абсолютных путей нет.
+     ─────────────────────────────────────────────────────────────── -->
+<link rel="canonical" href="https://romanbaukin.github.io/mr-web-landing/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="Mr. Web">
+<meta property="og:url" content="https://romanbaukin.github.io/mr-web-landing/">
+<meta property="og:title" content="Mr. Web — сайты под ключ за семь дней">
+<meta property="og:description" content="Лендинги и сайты под ключ для малого бизнеса: структура, текст, дизайн, вёрстка, интеграции. От $200, половина оплаты после сдачи.">
+<meta property="og:image" content="https://romanbaukin.github.io/mr-web-landing/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Семь дней от разговора до запуска">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Mr. Web",
+  "description": "Лендинги и многостраничные сайты под ключ для малого бизнеса: структура, текст, дизайн, вёрстка, интеграции и SEO. Срок лендинга 5–7 дней.",
+  "url": "https://romanbaukin.github.io/mr-web-landing/",
+  "image": "https://romanbaukin.github.io/mr-web-landing/assets/og.png",
+  "priceRange": "от $100",
+  "founder": { "@type": "Person", "name": "Роман Баукин" },
+  "sameAs": ["https://t.me/roman_baukin"],
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": { "@type": "Service", "name": "Лендинг под ключ" },
+      "priceSpecification": { "@type": "PriceSpecification", "minPrice": 200, "priceCurrency": "USD" }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": { "@type": "Service", "name": "Многостраничный сайт" },
+      "priceSpecification": { "@type": "PriceSpecification", "minPrice": 300, "priceCurrency": "USD" }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": { "@type": "Service", "name": "Вёрстка по макету" },
+      "priceSpecification": { "@type": "PriceSpecification", "minPrice": 100, "priceCurrency": "USD" }
+    }
+  ]
+}
+</script>
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
@@ -83,6 +133,9 @@ a:hover { color: var(--mark-deep); }
 :focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; border-radius: 2px; }
 ::selection { background: var(--mark); color: var(--paper); }
 
+/* шапка липкая, поэтому якорь иначе уводит заголовок раздела под неё */
+[id] { scroll-margin-top: calc(68px + var(--step)); }
+
 /* ── утилиты ───────────────────────────────────────────────────────── */
 .wrap { max-width: 1240px; margin-inline: auto; padding-inline: var(--edge); }
 
@@ -107,7 +160,6 @@ a:hover { color: var(--mark-deep); }
 }
 .cta:hover { background: var(--mark-deep); border-color: var(--mark-deep); color: var(--paper); }
 .cta-sm { padding: 10px 16px; font-size: 14.5px; }
-.cta-short { display: none; }
 
 /* ── шапка ─────────────────────────────────────────────────────────── */
 .top {
@@ -399,6 +451,12 @@ a:hover { color: var(--mark-deep); }
 .foot-note { font-size: 15px; color: var(--muted); margin-right: auto; }
 .foot-link { font-size: 15px; }
 
+/* ── липкая кнопка на телефоне ─────────────────────────────────────── */
+/* Единственный канал связи — Telegram, поэтому на узком экране он
+   должен быть под рукой в любой точке страницы. Подложка сплошная:
+   размытие здесь чужеродно, вся страница плоская. */
+.dock { display: none; }
+
 /* ── узкие экраны ──────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .top nav { display: none; }
@@ -419,10 +477,19 @@ a:hover { color: var(--mark-deep); }
   /* многоколоночные строки складываются в один столбец */
   .terms-row, .day, .service { grid-template-columns: 1fr; }
   .day-n { order: -1; }
+
+  .top .cta { display: none; }
+
+  .dock {
+    display: block; position: fixed; inset: auto 0 0 0; z-index: 20;
+    background: var(--paper); border-top: 1px solid var(--rule);
+    padding: 10px var(--edge);
+  }
+  .dock .cta { width: 100%; }
+  /* чтобы кнопка не накрывала подвал */
+  body { padding-bottom: 74px; }
 }
 @media (max-width: 560px) {
-  .cta-sm .cta-long { display: none; }
-  .cta-sm .cta-short { display: inline; }
   .foot-note { margin-right: 0; }
 }
 </style>
@@ -446,9 +513,7 @@ a:hover { color: var(--mark-deep); }
       <a href="#pricing">Цены</a>
       <a href="#faq">Вопросы</a>
     </nav>
-    <a class="cta cta-sm" href="https://t.me/roman_baukin" target="_blank" rel="noopener">
-      <span class="cta-long">Написать в&nbsp;Telegram</span><span class="cta-short">Telegram</span>
-    </a>
+    <a class="cta cta-sm" href="https://t.me/roman_baukin" target="_blank" rel="noopener">Написать в&nbsp;Telegram</a>
   </div>
 </header>
 
@@ -736,6 +801,10 @@ a:hover { color: var(--mark-deep); }
     <p class="foot-link"><a href="https://t.me/roman_baukin" target="_blank" rel="noopener">Telegram @roman_baukin</a></p>
   </div>
 </footer>
+
+<div class="dock">
+  <a class="cta" href="https://t.me/roman_baukin" target="_blank" rel="noopener">Написать в&nbsp;Telegram</a>
+</div>
 
 </body>
 </html>

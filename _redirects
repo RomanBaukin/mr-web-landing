@@ -1,0 +1,4 @@
+# Netlify читает этот файл, GitHub Pages его игнорирует.
+# Пока пусто: переадресовывать нечего. Когда появится свой домен,
+# сюда встанет редирект со старого адреса на новый, например:
+#   https://romanbaukin.github.io/mr-web-landing/*  https://mrweb.example/:splat  301!
