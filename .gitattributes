@@ -1,0 +1,8 @@
+# Единые переводы строк в репозитории независимо от ОС разработчика
+* text=auto eol=lf
+
+*.woff2 binary
+*.woff  binary
+*.png   binary
+*.jpg   binary
+*.webp  binary
